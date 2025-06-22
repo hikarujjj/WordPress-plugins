@@ -96,6 +96,7 @@ class Amazon_Corner_Buddy {
             'opacity' => $this->get_option('opacity', 0.8),
             'position_bottom' => $this->get_option('position_bottom', 20),
             'position_left' => $this->get_option('position_left', 20),
+            'border_radius' => $this->get_option('border_radius', 12),
             'icon_url' => ACB_PLUGIN_URL . 'assets/images/amazon-icon.svg',
             'link_url' => $this->get_option('link_url', 'https://amzn.to/446mmWI')
         ));
@@ -130,6 +131,7 @@ class Amazon_Corner_Buddy {
         $opacity = $this->get_option('opacity', 0.8);
         $bottom = $this->get_option('position_bottom', 20);
         $left = $this->get_option('position_left', 20);
+        $border_radius = $this->get_option('border_radius', 12);
         
         $link_url = $this->get_option('link_url', 'https://amzn.to/446mmWI');
         
@@ -140,6 +142,7 @@ class Amazon_Corner_Buddy {
             width: ' . intval($icon_size) . 'px;
             height: ' . intval($icon_size) . 'px;
             opacity: ' . floatval($opacity) . ';
+            border-radius: ' . intval($border_radius) . 'px;
             z-index: 9999;
             display: block;
             text-decoration: none;
@@ -223,6 +226,15 @@ class Amazon_Corner_Buddy {
             'acb_general_section'
         );
         
+        // 角丸設定
+        add_settings_field(
+            'border_radius',
+            '角丸の大きさ（px）',
+            array($this, 'border_radius_field_callback'),
+            'acb_settings',
+            'acb_general_section'
+        );
+        
         // リンクURL
         add_settings_field(
             'link_url',
@@ -245,6 +257,7 @@ class Amazon_Corner_Buddy {
         $sanitized['opacity'] = max(0.1, min(1.0, floatval($input['opacity'])));
         $sanitized['position_bottom'] = max(0, min(500, intval($input['position_bottom'])));
         $sanitized['position_left'] = max(0, min(500, intval($input['position_left'])));
+        $sanitized['border_radius'] = max(0, min(50, intval($input['border_radius'])));
         $sanitized['link_url'] = esc_url_raw($input['link_url']);
         
         return $sanitized;
@@ -291,6 +304,12 @@ class Amazon_Corner_Buddy {
         $opacity = $this->get_option('opacity', 0.8);
         echo '<input type="number" name="acb_options[opacity]" value="' . esc_attr($opacity) . '" min="0.1" max="1.0" step="0.1">';
         echo '<p class="description">0.1-1.0の間で設定してください。</p>';
+    }
+    
+    public function border_radius_field_callback() {
+        $border_radius = $this->get_option('border_radius', 12);
+        echo '<input type="number" name="acb_options[border_radius]" value="' . esc_attr($border_radius) . '" min="0" max="50">';
+        echo '<p class="description">アイコンの角丸の大きさを設定します（0-50px）。0で角丸なし。</p>';
     }
     
     public function link_url_field_callback() {

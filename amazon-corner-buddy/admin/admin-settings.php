@@ -21,6 +21,7 @@ if (isset($_POST['submit']) && check_admin_referer('acb_settings_nonce')) {
         'opacity' => max(0.1, min(1.0, floatval($_POST['acb_options']['opacity']))),
         'position_bottom' => max(0, min(500, intval($_POST['acb_options']['position_bottom']))),
         'position_left' => max(0, min(500, intval($_POST['acb_options']['position_left']))),
+        'border_radius' => max(0, min(50, intval($_POST['acb_options']['border_radius']))),
         'link_url' => esc_url_raw($_POST['acb_options']['link_url'])
     );
     
@@ -35,6 +36,7 @@ $icon_size = isset($options['icon_size']) ? $options['icon_size'] : 48;
 $opacity = isset($options['opacity']) ? $options['opacity'] : 0.8;
 $position_bottom = isset($options['position_bottom']) ? $options['position_bottom'] : 20;
 $position_left = isset($options['position_left']) ? $options['position_left'] : 20;
+$border_radius = isset($options['border_radius']) ? $options['border_radius'] : 12;
 $link_url = isset($options['link_url']) ? $options['link_url'] : 'https://amzn.to/446mmWI';
 ?>
 
@@ -117,6 +119,23 @@ $link_url = isset($options['link_url']) ? $options['link_url'] : 'https://amzn.t
                             </td>
                         </tr>
                         
+                        <!-- 角丸設定 -->
+                        <tr>
+                            <th scope="row">
+                                <label for="acb_border_radius">角丸の大きさ</label>
+                            </th>
+                            <td>
+                                <input type="number" 
+                                       id="acb_border_radius" 
+                                       name="acb_options[border_radius]" 
+                                       value="<?php echo esc_attr($border_radius); ?>" 
+                                       min="0" 
+                                       max="50" 
+                                       style="width: 80px;"> px
+                                <p class="description">アイコンの角丸の大きさを設定します（0-50px）。0で角丸なし。</p>
+                            </td>
+                        </tr>
+                        
                         <!-- 位置設定 -->
                         <tr>
                             <th scope="row">位置設定</th>
@@ -169,14 +188,14 @@ $link_url = isset($options['link_url']) ? $options['link_url'] : 'https://amzn.t
             <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                 <h3 style="margin-top: 0;">プレビュー</h3>
                 <div style="position: relative; background: #fff; border: 2px dashed #ddd; height: 200px; border-radius: 4px;">
-                    <div style="position: absolute; 
+                    <div class="acb-admin-preview" style="position: absolute; 
                                bottom: <?php echo esc_attr($position_bottom); ?>px; 
                                left: <?php echo esc_attr($position_left); ?>px; 
                                width: <?php echo esc_attr($icon_size); ?>px; 
                                height: <?php echo esc_attr($icon_size); ?>px; 
                                opacity: <?php echo esc_attr($opacity); ?>; 
                                background: #232f3e; 
-                               border-radius: 12px; 
+                               border-radius: <?php echo esc_attr($border_radius); ?>px; 
                                display: flex; 
                                align-items: center; 
                                justify-content: center; 
@@ -247,17 +266,19 @@ jQuery(document).ready(function($) {
         var opacity = $('#acb_opacity').val();
         var positionLeft = $('#acb_position_left').val();
         var positionBottom = $('#acb_position_bottom').val();
+        var borderRadius = $('#acb_border_radius').val();
         
         $('.acb-admin-preview').css({
             'width': iconSize + 'px',
             'height': iconSize + 'px',
             'opacity': opacity,
             'left': positionLeft + 'px',
-            'bottom': positionBottom + 'px'
+            'bottom': positionBottom + 'px',
+            'border-radius': borderRadius + 'px'
         });
     }
     
     // 設定値変更時にリアルタイムでプレビュー更新
-    $('#acb_icon_size, #acb_opacity, #acb_position_left, #acb_position_bottom').on('input', updatePreview);
+    $('#acb_icon_size, #acb_opacity, #acb_position_left, #acb_position_bottom, #acb_border_radius').on('input', updatePreview);
 });
 </script>
